@@ -4,19 +4,22 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class Movies extends Migration
-{
-	public function up()
-	{
+class Movies extends Migration {
+	public function up() {
 		$this->forge->addField([
-			'id'          => [
-				'type'           => 'INT',
-				'constraint'     => 5,
-				'unsigned'       => true,
+			'id' => [
+				'type' => 'INT',
+				'constraint' => 5,
+				'unsigned' => true,
 				'auto_increment' => true,
 			],
-			'title'       => [
-				'type'       => 'VARCHAR',
+			'category_id' => [
+				'type' => 'INT',
+				'constraint' => 5,
+				'unsigned' => true,
+			],
+			'title' => [
+				'type' => 'VARCHAR',
 				'constraint' => '255',
 			],
 			'description' => [
@@ -28,8 +31,7 @@ class Movies extends Migration
 		$this->forge->createTable('movies');
 	}
 
-	public function down()
-	{
+	public function down() {
 		$this->forge->dropTable('movies');
 	}
 }

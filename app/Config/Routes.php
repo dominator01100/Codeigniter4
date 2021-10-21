@@ -34,10 +34,16 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Home::index');
 //$routes->get('/contacto', 'Home::contacto');
 $routes->get('/contacto/(:any)', 'Home::contacto/$1', ['as' => 'contacto']);
-$routes->get('/movie', 'dashboard/MovieController::index');
-$routes->get('/movie/test/(:any)', 'dashboard/MovieController::test/$1');
-$routes->get('/movie/show/', 'dashboard/MovieController::show/');
+
 $routes->get('/category', 'dashboard/CategoryController::index');
+
+$routes->group('dashboard', function ($routes) {
+	// $routes->get('movie', 'dashboard/MovieController::index');
+	// $routes->get('movie/test/(:any)', 'dashboard/MovieController::test/$1');
+	// $routes->get('movie/show/', 'dashboard/MovieController::show/');
+});
+
+$routes->resource('movie');
 
 /*
  * --------------------------------------------------------------------

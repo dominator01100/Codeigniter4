@@ -5,14 +5,12 @@ use CodeIgniter\Model;
 class MovieModel extends Model {
 	protected $table = 'movies';
 	protected $primaryKey = 'id';
+	protected $allowedFields = ['title', 'description', 'category_id'];
 
-	public function get($id = null) {
-		if ($id === null) {
-			return $this->findAll();
-		}
-
+	function getAll() {
 		return $this->asArray()
-			->where(['id' => $id])
+			->select('movies.*, categories.title as category')
+			->join('categories', 'categories.id = movies.category_id')
 			->first();
 	}
 }
