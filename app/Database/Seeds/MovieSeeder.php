@@ -15,6 +15,7 @@ class MovieSeeder extends Seeder {
 		for ($i = 1; $i <= 20; $i++) {
 			$data = [
 				'title' => "Movie $i",
+				'category_id' => 1,
 				'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac lorem aliquam, blandit risus vitae, efficitur sapien. Phasellus vulputate, arcu et egestas malesuada, dolor elit suscipit nibh, ac semper lacus nisi eget neque. Pellentesque libero odio, mattis nec enim a, cursus rhoncus velit.',
 			];
 

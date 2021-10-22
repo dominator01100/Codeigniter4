@@ -47,12 +47,14 @@ class Movie extends BaseController {
 
 	public function edit($id = null) {
 		$category = new CategoryModel();
+		$images = new MovieImageModel();
 		$movie = new MovieModel();
+
 		if ($movie->find($id) == null) {
 			throw PageNotFoundException::forPageNotFound();
 		}
 		$validation = \Config\Services::validation();
-		$this->_loadDefaultView('Crear película', ['validation' => $validation, 'movie' => $movie->asObject()->find($id), 'categories' => $category->asObject()->findAll()], 'edit');
+		$this->_loadDefaultView('Actualizar película', ['validation' => $validation, 'movie' => $movie->asObject()->find($id), 'categories' => $category->asObject()->findAll(), 'images' => $images->getByMovieId($id)], 'edit');
 	}
 
 	public function update($id = null) {
@@ -84,16 +86,41 @@ class Movie extends BaseController {
 			throw PageNotFoundException::forPageNotFound();
 		}
 		$movie->delete($id);
-		echo "Delete $id";
 		return redirect()->to('/movie')->with('message', 'Película eliminada con éxito.');
 	}
 
 	public function show($id = null) {
-		$movie = new MovieModel();
 
-		if ($movie->find($id) == null) {
+		$movieModel = new MovieModel();
+		$movie = $movieModel->asObject()->find($id);
+		$imageModel = new MovieImageModel();
+
+		if ($movie == null) {
 			throw PageNotFoundException::forPageNotFound();
 		}
+
+		$this->_loadDefaultView($movie->title,
+			['movie' => $movie, 'images' => $imageModel->getByMovieId($id)], 'show');
+	}
+
+	public function delete_image($imageId) {
+		helper('filesystem');
+		$imageModel = new MovieImageModel();
+		$image = $imageModel->asObject()->find($imageId);
+
+		if ($image == null) {
+			throw PageNotFoundException::forPageNotFound();
+		}
+
+		$imgRute = WRITEPATH . 'uploads/movies/' . $image->movie_id . '/' . $image->image;
+
+		if (!file_exists($imgRute)) {
+			throw PageNotFoundException::forPageNotFound();
+		}
+
+		$imageModel->delete($imageId);
+		unlink($imgRute);
+		return redirect()->back()->with('message', 'Imagen eliminada con éxito.');
 	}
 
 	private function _upload($movieId) {

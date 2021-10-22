@@ -30,6 +30,10 @@ class Validation {
 		'description' => 'min_length[3]|max_length[5000]',
 	];
 
+	public $categories = [
+		'title' => 'required|min_length[3]|max_length[255]',
+	];
+
 	/**
 	 * Specifies the views that are used to display the
 	 * errors.
@@ -37,7 +41,8 @@ class Validation {
 	 * @var array<string, string>
 	 */
 	public $templates = [
-		'list' => 'CodeIgniter\Validation\Views\list',
+		// 'list' => 'CodeIgniter\Validation\Views\list',
+		'list' => 'App\Views\Validations\list_bootstrap',
 		'single' => 'CodeIgniter\Validation\Views\single',
 	];
 
