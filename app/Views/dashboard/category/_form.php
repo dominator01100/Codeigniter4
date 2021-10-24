@@ -1,5 +1,5 @@
-<div class="form-group">
-    <label for="title">Title</label>
+<div class="mb-3">
+    <label class="form-label" for="title">Title</label>
     <input class="form-control" type="input" id="title" name="title" value="<?=old('title', $category->title)?>"/>
 </div>
 

@@ -31,22 +31,28 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+
 $routes->get('/', 'Home::index');
 //$routes->get('/contacto', 'Home::contacto');
 $routes->get('/contacto/(:any)', 'Home::contacto/$1', ['as' => 'contacto']);
 
-$routes->get('image', 'Home::image');
-$routes->get('image/(:num)/(:any)', 'Home::image/$1/$2', ['as' => 'get_image']);
-$routes->get('movie/image/(:num)', 'Movie::delete_image/$1', ['as' => 'image_delete']);
-
+$routes->get('/image', 'Home::image');
+$routes->get('/image/(:num)/(:any)', 'Home::image/$1/$2', ['as' => 'get_image']);
+$routes->get('/movie/image/(:num)', 'Movie::delete_image/$1', ['as' => 'image_delete']);
 $routes->group('dashboard', function ($routes) {
-	// $routes->get('movie', 'dashboard/MovieController::index');
-	// $routes->get('movie/test/(:any)', 'dashboard/MovieController::test/$1');
-	// $routes->get('movie/show/', 'dashboard/MovieController::show/');
+
+	//$routes->get('movie', 'dashboard/MovieController::index');
+	//$routes->get('movie/test/(:any)', 'dashboard/MovieController::test/$1');
+	//$routes->get('movie/show/', 'dashboard/MovieController::show/');
 });
 
 $routes->resource('movie');
 $routes->resource('category', ['except' => ['show']]);
+$routes->resource('client', ['except' => ['show']]);
+
+$routes->get('/login', 'web/User::login', ['as' => 'user_login_get']);
+$routes->post('/login_post', 'web/User::login_post', ['as' => 'user_login_post']);
+$routes->post('/logout', 'web/User::logout', ['as' => 'user_logout']);
 
 /*
  * --------------------------------------------------------------------

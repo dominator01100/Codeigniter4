@@ -30,6 +30,21 @@
 						</ul>
 					</li>
 				</ul>
+
+				<ul class="navbar-nav mb-2 mb-lg-0">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+							Usuario
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+							<li>
+								<form class="dropdown-item" action="<?=base_url()?>/logout" method="post">
+									<button class="btn btn-link text-decoration-none" type="submit"><i class="fas fa-door-closed"></i> Cerrar sesión</button>
+								</form>
+							</li>
+						</ul>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</nav>
