@@ -1,5 +1,5 @@
 <div class="mb-3">
-    <label class="form-label" for="title">Title</label>
+    <label class="form-label" for="title"><?=lang('Form.title')?></label>
     <input class="form-control" type="input" id="title" name="title" value="<?=old('title', $category->title)?>"/>
 </div>
 

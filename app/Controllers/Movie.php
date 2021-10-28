@@ -6,17 +6,48 @@ use App\Models\CategoryModel;
 use App\Models\MovieImageModel;
 use App\Models\MovieModel;
 use \CodeIgniter\Exceptions\PageNotFoundException;
+use \Config\App;
 
 class Movie extends BaseController {
 
 	public function index() {
+		// echo lang('Form.name');
+
+		$config = new \Config\Web();
+		$config = config('Config\\Web');
+		$config2 = new App();
+
+		// var_dump($config);
+		// echo $config2->siteName;
+
+		// $this->cachePage(60);
+
 		$movie = new MovieModel();
 
+		/*if (!$movies = cache('movies')) {
+		echo 'Caché no existe.';
+
+		$movies = $movie->asObject()
+		->select('movies.*, categories.title as category')
+		->join('categories', 'categories.id = movies.category_id')
+		->paginate(10);
+
+		cache()->save('movies', $movies, 60);
+
+		} else {
+		echo 'Caché existe.';
+		 */
+
+		$movies = $movie->asObject()
+			->select('movies.*, categories.title as category')
+			->join('categories', 'categories.id = movies.category_id')
+		// ->getCompiledSelect();
+			->paginate(10);
+
+		// echo $movies;
+
 		$data = [
-			'movies' => $movie->asObject()
-				->select('movies.*, categories.title as category')
-				->join('categories', 'categories.id = movies.category_id')
-				->paginate(10),
+			'movies' => $movies,
 			'pager' => $movie->pager,
 		];
 
@@ -73,6 +104,10 @@ class Movie extends BaseController {
 					'category_id' => $this->request->getPost('category_id'),
 				]);
 
+			log_message('info', 'Usuario actualizado: {id}', ['id' => $id]);
+
+			// cache()->delete('movies');
+
 			$this->_upload($id);
 
 			return redirect()->to('/movie')->with('message', 'Película editada con éxito.');
@@ -103,7 +138,7 @@ class Movie extends BaseController {
 			['movie' => $movie, 'images' => $imageModel->getByMovieId($id)], 'show');
 	}
 
-	public function delete_image($imageId) {
+	public function deleteImage($imageId) {
 		helper('filesystem');
 		$imageModel = new MovieImageModel();
 		$image = $imageModel->asObject()->find($imageId);
