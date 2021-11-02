@@ -79,6 +79,13 @@ $routes->group('lib', function ($routes) {
 	$routes->get('file', 'MyLibraries::file');
 });
 
+// Helpers
+$routes->get('helper/array', 'Myhelper::array');
+$routes->get('helper/filesystem', 'Myhelper::filesystem');
+$routes->get('helper/number', 'Myhelper::number');
+$routes->get('helper/text', 'Myhelper::text');
+$routes->get('helper/url', 'Myhelper::url');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
