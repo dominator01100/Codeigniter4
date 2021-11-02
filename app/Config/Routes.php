@@ -65,6 +65,20 @@ $routes->get('/my_request', 'Home::my_request');
 $routes->get('/my_transaction', 'Home::my_transaction');
 $routes->get('/my_database', 'Home::my_database');
 
+// Libraries
+$routes->group('lib', function ($routes) {
+	$routes->get('curl_get', 'MyLibraries::curl_get');
+	$routes->get('curl_post', 'MyLibraries::curl_post');
+	$routes->get('curl_put', 'MyLibraries::curl_put');
+	$routes->get('curl_remove', 'MyLibraries::curl_remove');
+	$routes->get('agent', 'MyLibraries::agent');
+	$routes->get('email', 'MyLibraries::email');
+	$routes->get('encrypter', 'MyLibraries::encrypter');
+	$routes->get('time', 'MyLibraries::time');
+	$routes->get('uri', 'MyLibraries::uri');
+	$routes->get('file', 'MyLibraries::file');
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
