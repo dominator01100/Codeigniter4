@@ -1,115 +1,111 @@
 <?php namespace App\Controllers;
-use App\Models\UserModel;
 use App\Controllers\BaseController;
+use App\Models\UserModel;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 class Client extends BaseController {
 
-    public function index(){
+	public function index() {
 
-        $user = new UserModel();
+		$user = new UserModel();
 
-        $data = [
-            'users' => $user->asObject()
-            ->paginate(10),
-            'pager' => $user->pager
-        ];
+		$data = [
+			'users' => $user->asObject()
+				->paginate(10),
+			'pager' => $user->pager,
+		];
 
-        $this->_loadDefaultView( 'Listado de usuarios',$data,'index');
-    }
+		$this->_loadDefaultView('Listado de usuarios', $data, 'index');
+	}
 
-    public function new(){
+	public function new () {
 
-        $user = new UserModel();
+		$user = new UserModel();
 
-        $validation =  \Config\Services::validation();
-        $this->_loadDefaultView('Crear usuario',['validation'=>$validation, 'user'=> new UserModel()],'new');
+		$validation = \Config\Services::validation();
+		$this->_loadDefaultView('Crear usuario', ['validation' => $validation, 'user' => new UserModel()], 'new');
 
-    }
+	}
 
-    public function create(){
+	public function create() {
 
-        helper("user");
+		helper("user");
 
-        $user = new UserModel();
+		$user = new UserModel();
 
-        if($this->validate('users')){
-            $id = $user->insert([
-                'username' =>$this->request->getPost('username'),
-                'email' =>$this->request->getPost('email'),
-                'type' => "admin",
-                'password' => hashPassword($this->request->getPost('password')),
-            ]);
+		if ($this->validate('users')) {
+			$id = $user->insert([
+				'username' => $this->request->getPost('username'),
+				'email' => $this->request->getPost('email'),
+				'type' => "admin",
+				'password' => hashPassword($this->request->getPost('password')),
+			]);
 
-            return redirect()->to("/client/$id/edit")->with('message', 'Usuario creada con éxito.');
+			return redirect()->to("/client/$id/edit")->with('message', 'Usuario creado con éxito.');
 
-        }
-        
-        return redirect()->back()->withInput();
-    }
+		}
 
-    public function edit($id = null){
+		return redirect()->back()->withInput();
+	}
 
-        $user = new UserModel();
+	public function edit($id = null) {
 
-        if ($user->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
+		$user = new UserModel();
 
-        $validation =  \Config\Services::validation();
-        $this->_loadDefaultView('Actualizar usuario',
-        ['validation'=>$validation,'user'=> $user->asObject()->find($id), ],'edit');
-    }
+		if ($user->find($id) == null) {
+			throw PageNotFoundException::forPageNotFound();
+		}
 
-    public function update($id = null){
+		$validation = \Config\Services::validation();
+		$this->_loadDefaultView('Actualizar usuario',
+			['validation' => $validation, 'user' => $user->asObject()->find($id)], 'edit');
+	}
 
-        helper("user");
+	public function update($id = null) {
 
-        $user = new UserModel();
+		helper("user");
 
-        if ($user->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
+		$user = new UserModel();
 
-        if($this->validate('usersUpdate')){
-            $user->update($id, [
-                'password' => hashPassword($this->request->getPost('password')),
-                'type' => "admin",
-            ]);
+		if ($user->find($id) == null) {
+			throw PageNotFoundException::forPageNotFound();
+		}
 
-            return redirect()->to('/client')->with('message', 'Usuario editada con éxito.');
+		if ($this->validate('usersUpdate')) {
+			$user->update($id, [
+				'password' => hashPassword($this->request->getPost('password')),
+				'type' => "admin",
+			]);
 
-        }
+			return redirect()->to('/client')->with('message', 'Usuario editado con éxito.');
 
-        return redirect()->back()->withInput();
-    }
+		}
 
-    public function delete($id = null){
+		return redirect()->back()->withInput();
+	}
 
-        $user = new UserModel();
+	public function delete($id = null) {
 
-        if ($user->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
-        
-        $user->delete($id);
+		$user = new UserModel();
 
-        return redirect()->to('/client')->with('message', 'Usuario eliminada con éxito.');
-    }
+		if ($user->find($id) == null) {
+			throw PageNotFoundException::forPageNotFound();
+		}
 
-    private function _loadDefaultView($title,$data,$view){
+		$user->delete($id);
 
-        $dataHeader =[
-            'title' => $title
-        ];
+		return redirect()->to('/client')->with('message', 'Usuario eliminado con éxito.');
+	}
 
-        echo view("dashboard/templates/header",$dataHeader);
-        echo view("dashboard/user/$view",$data);
-        echo view("dashboard/templates/footer");
-    }
+	private function _loadDefaultView($title, $data, $view) {
 
+		$dataHeader = [
+			'title' => $title,
+		];
+
+		echo view("dashboard/templates/header", $dataHeader);
+		echo view("dashboard/user/$view", $data);
+		echo view("dashboard/templates/footer");
+	}
 
 }

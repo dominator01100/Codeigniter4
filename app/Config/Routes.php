@@ -74,8 +74,7 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
-//*** Librerias */
-//*** Librerias */
+// Librerias
 $routes->group('lib', function ($routes) {
 	$routes->get('curl_get', 'MyLibraries::curl_get');
 	$routes->get('curl_post', 'MyLibraries::curl_post');
@@ -107,27 +106,27 @@ $routes->resource('movie');
 $routes->resource('category', ['except' => ['show']]);
 $routes->resource('client', ['except' => ['show']]);
 
-//***REST */
-$routes->get('rest-movie/paginate','RestMovie::paginate');
-$routes->get('rest-movie/search','RestMovie::search');
-
+// REST
+$routes->get('rest-movie/categories', 'RestMovie::categories');
+$routes->get('rest-movie/paginate', 'RestMovie::paginate');
+$routes->get('rest-movie/search', 'RestMovie::search');
 $routes->resource('rest-movie', ['controller' => 'RestMovie']);
 
-
-
+// Login
 $routes->get('/login', 'web/User::login', ['as' => 'user_login_get']);
 $routes->post('/login_post', 'web/User::login_post', ['as' => 'user_login_post']);
 $routes->post('/logout', 'web/User::logout', ['as' => 'user_logout']);
 
-
-//helpers
+// Helpers
 $routes->get('/helper/array', 'Myhelper::array');
 $routes->get('/helper/filesystem', 'Myhelper::filesystem');
 $routes->get('/helper/number', 'Myhelper::number');
 $routes->get('/helper/text', 'Myhelper::text');
 $routes->get('/helper/url', 'Myhelper::url');
 
-//**********/ Store */
+///////////
+// Store //
+///////////
 $routes->get('/', 'Store/Movie::index', ['as' => 'store_movie_index']);
 
 $routes->group('store', function ($routes) {
@@ -147,10 +146,6 @@ $routes->group('store', function ($routes) {
 	$routes->get('buyed', 'Store\Buyed::index', ['as' => 'store_buyed_index']);
 	$routes->get('buyed/(:num)', 'Store\Buyed::show/$1', ['as' => 'store_buyed_show']);
 });
-
-
-
-
 
 /**
  * --------------------------------------------------------------------

@@ -21,6 +21,7 @@ class Validation
 
 	public $movies =[
 		'title' => 'required|min_length[3]|max_length[255]',
+		'category_id' => 'required|is_natural_no_zero',
 		'description' => 'min_length[3]|max_length[5000]'
 	];
 

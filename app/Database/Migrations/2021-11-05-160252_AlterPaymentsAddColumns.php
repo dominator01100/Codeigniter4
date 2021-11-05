@@ -4,10 +4,8 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class AlterPaymentsAddColumns extends Migration
-{
-	public function up()
-	{
+class AlterPaymentsAddColumns extends Migration {
+	public function up() {
 
 		$fields = [
 			'payment_id' => [
@@ -16,9 +14,9 @@ class AlterPaymentsAddColumns extends Migration
 			],
 			'type' => [
 				'type' => 'ENUM',
-				'constraint' => ['paypal','stripe'],
-				'default' => 'paypal'
-			]
+				'constraint' => ['paypal', 'stripe'],
+				'default' => 'paypal',
+			],
 		];
 
 		$this->forge->addColumn('payments', $fields);
@@ -26,8 +24,7 @@ class AlterPaymentsAddColumns extends Migration
 
 	//--------------------------------------------------------------------
 
-	public function down()
-	{
+	public function down() {
 		$this->forge->dropColumn('payments', 'type');
 		$this->forge->dropColumn('payments', 'payment_id');
 		//
