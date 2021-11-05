@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>CodeIgniter</title>
+    <meta charset="UTF-8">
+    <title>CodeIgniter</title>
 </head>
 <body>
-	<h1>CodeIgniter 4!</h1>
+    <h1>CodeIniger 4!</h1>
 </body>
 </html>

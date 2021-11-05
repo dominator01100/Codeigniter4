@@ -1,25 +1,30 @@
-<?php
+<?php namespace App\Database\Seeds;
 
-namespace App\Database\Seeds;
+class MovieSeeder extends \CodeIgniter\Database\Seeder
+{
+        public function run()
+        {
 
-use CodeIgniter\Database\Seeder;
+            $this->db->table('movies')->where('id >',1)->delete();
 
-class MovieSeeder extends Seeder {
-	public function run() {
-		$this->db->table('movies')->where('id >', 1)->delete();
+     
 
-		// Simple Queries
-		// $this->db->query("INSERT INTO movies (title, description) VALUES(:title:, :description:)", $data);
+                // Simple Queries
+                // $this->db->query("INSERT INTO movies (title, description) VALUES(:title:, :description:)",
+                //         $data
+                // );
 
-		// Using Query Builder
-		for ($i = 1; $i <= 20; $i++) {
-			$data = [
-				'title' => "Movie $i",
-				'category_id' => 1,
-				'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac lorem aliquam, blandit risus vitae, efficitur sapien. Phasellus vulputate, arcu et egestas malesuada, dolor elit suscipit nibh, ac semper lacus nisi eget neque. Pellentesque libero odio, mattis nec enim a, cursus rhoncus velit.',
-			];
+                // Using Query Builder
 
-			$this->db->table('movies')->insert($data);
-		}
-	}
+                for ($i=1; $i <= 20; $i++) { 
+                    $data = [
+                        'title' => "Movie $i",
+                        'category_id' =>  $i,
+                        'description'    => 'Database seeding is a simple way to add data into your database. It is especially useful during development where you need to populate the database with sample data that you can develop against, but it is not limited to that. Seeds can contain static data that you don’t want to include in a migration, like countries, or geo-coding tables, event or setting information, and more.'
+                    ];
+                    $this->db->table('movies')->insert($data);
+                }
+
+                
+        }
 }

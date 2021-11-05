@@ -1,98 +1,109 @@
 <?php namespace App\Controllers;
-use App\Controllers\BaseController;
 use App\Models\CategoryModel;
+use App\Controllers\BaseController;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 class Category extends BaseController {
 
-	public function index() {
+    public function index(){
 
-		$category = new CategoryModel();
+        $category = new CategoryModel();
 
-		$data = [
-			'categories' => $category->asObject()
-				->paginate(10),
-			'pager' => $category->pager,
-		];
+        $data = [
+            'categories' => $category->asObject()
+            ->paginate(10),
+            'pager' => $category->pager
+        ];
 
-		$this->_loadDefaultView(lang('Form.categories_list'), $data, 'index');
-	}
+        $this->_loadDefaultView( 'Listado de categorías',$data,'index');
+    }
 
-	public function new () {
-		$category = new CategoryModel();
-		$validation = \Config\Services::validation();
-		$this->_loadDefaultView(lang('Form.category_create'), ['validation' => $validation, 'category' => new CategoryModel(), 'categories' => $category->asObject()->findAll()], 'new');
-	}
+    public function new(){
 
-	public function create() {
+        $category = new CategoryModel();
 
-		$category = new CategoryModel();
+        //mkdir('writeable/uploads/test',0755,true);
 
-		if ($this->validate('categories')) {
-			$id = $category->insert([
-				'title' => $this->request->getPost('title'),
-			]);
+        $validation =  \Config\Services::validation();
+        $this->_loadDefaultView('Crear categoría',['validation'=>$validation, 'category'=> new CategoryModel(), 'categories' => $category->asObject()->findAll()],'new');
 
-			return redirect()->to("/category/$id/edit")->with('message', lang('Form.category_create_success'));
-		}
+    }
 
-		return redirect()->back()->withInput();
-	}
+    public function create(){
 
-	public function edit($id = null) {
+        $category = new CategoryModel();
 
-		$category = new CategoryModel();
+        if($this->validate('categories')){
+            $id = $category->insert([
+                'title' =>$this->request->getPost('title'),
+            ]);
 
-		if ($category->find($id) == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
+            return redirect()->to("/category/$id/edit")->with('message', 'Película creada con éxito.');
 
-		$validation = \Config\Services::validation();
-		$this->_loadDefaultView(lang('Form.category_update'),
-			['validation' => $validation, 'category' => $category->asObject()->find($id)], 'edit');
-	}
+        }
+        
+        return redirect()->back()->withInput();
+    }
 
-	public function update($id = null) {
+    public function edit($id = null){
 
-		$category = new CategoryModel();
+        $category = new CategoryModel();
 
-		if ($category->find($id) == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
+        if ($category->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
 
-		if ($this->validate('categories')) {
-			$category->update($id, [
-				'title' => $this->request->getPost('title'),
-			]);
+        $validation =  \Config\Services::validation();
+        $this->_loadDefaultView('Actualizar categoría',
+        ['validation'=>$validation,'category'=> $category->asObject()->find($id), ],'edit');
+    }
 
-			return redirect()->to('/category')->with('message', lang('Form.category_edit_success'));
+    public function update($id = null){
 
-		}
+        $category = new CategoryModel();
 
-		return redirect()->back()->withInput();
-	}
+        if ($category->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
 
-	public function delete($id = null) {
+        if($this->validate('categories')){
+            $category->update($id, [
+                'title' =>$this->request->getPost('title'),
+            ]);
 
-		$category = new CategoryModel();
+            return redirect()->to('/category')->with('message', 'Película editada con éxito.');
 
-		if ($category->find($id) == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
+        }
 
-		$category->delete($id);
+        return redirect()->back()->withInput();
+    }
 
-		return redirect()->to('/category')->with('message', lang('Form.category_delete_success'));
-	}
+    public function delete($id = null){
 
-	private function _loadDefaultView($title, $data, $view) {
+        $category = new CategoryModel();
 
-		$dataHeader = [
-			'title' => $title,
-		];
+        if ($category->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        
+        $category->delete($id);
 
-		echo view("dashboard/templates/header", $dataHeader);
-		echo view("dashboard/category/$view", $data);
-		echo view("dashboard/templates/footer");
-	}
+        return redirect()->to('/category')->with('message', 'cateogría eliminada con éxito.');
+    }
+
+    private function _loadDefaultView($title,$data,$view){
+
+        $dataHeader =[
+            'title' => $title
+        ];
+
+        echo view("dashboard/templates/header",$dataHeader);
+        echo view("dashboard/category/$view",$data);
+        echo view("dashboard/templates/footer");
+    }
+
+
 }

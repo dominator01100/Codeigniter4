@@ -1,186 +1,187 @@
-<?php
-
-namespace App\Controllers;
-use App\Controllers\BaseController;
+<?php namespace App\Controllers;
+use App\Models\MovieModel;
 use App\Models\CategoryModel;
 use App\Models\MovieImageModel;
-use App\Models\MovieModel;
+use App\Controllers\BaseController;
 use \CodeIgniter\Exceptions\PageNotFoundException;
-use \Config\App;
 
 class Movie extends BaseController {
 
-	public function index() {
-		// echo lang('Form.name');
+    public function index(){
 
-		$config = new \Config\Web();
-		$config = config('Config\\Web');
-		$config2 = new App();
+        $movie = new MovieModel();
 
-		// var_dump($config);
-		// echo $config2->siteName;
+        $data = [
+            'movies' => $movie->asObject()
+            ->select('movies.*, categories.title as category')
+            ->join('categories','categories.id = movies.category_id')
+            ->paginate(10),
+            'pager' => $movie->pager
+        ];
 
-		// $this->cachePage(60);
+        $this->_loadDefaultView( 'Listado de películas',$data,'index');
+    }
 
-		$movie = new MovieModel();
+    public function new(){
 
-		/*if (!$movies = cache('movies')) {
-		echo 'Caché no existe.';
+        $category = new CategoryModel();
 
-		$movies = $movie->asObject()
-		->select('movies.*, categories.title as category')
-		->join('categories', 'categories.id = movies.category_id')
-		->paginate(10);
+        //mkdir('writeable/uploads/test',0755,true);
 
-		cache()->save('movies', $movies, 60);
+        $validation =  \Config\Services::validation();
+        $this->_loadDefaultView('Crear película',['validation'=>$validation, 'movie'=> new MovieModel(), 'categories' => $category->asObject()->findAll()],'new');
 
-		} else {
-		echo 'Caché existe.';
-		 */
+    }
 
-		$movies = $movie->asObject()
-			->select('movies.*, categories.title as category')
-			->join('categories', 'categories.id = movies.category_id')
-		// ->getCompiledSelect();
-			->paginate(10);
+    public function create(){
 
-		// echo $movies;
+        $movie = new MovieModel();
 
-		$data = [
-			'movies' => $movies,
-			'pager' => $movie->pager,
-		];
+        if($this->validate('movies')){
+            $id = $movie->insert([
+                'title' =>$this->request->getPost('title'),
+                'description' =>$this->request->getPost('description'),
+                'category_id' =>$this->request->getPost('category_id'),
+            ]);
 
-		$this->_loadDefaultView('Listado de películas', $data, 'index');
-	}
+            return redirect()->to("/movie/$id/edit")->with('message', 'Película creada con éxito.');
 
-	public function new () {
-		$category = new CategoryModel();
-		//mkdir('writable/uploads/test', 0755, true);
-		$validation = \Config\Services::validation();
-		$this->_loadDefaultView('Crear película', ['validation' => $validation, 'movie' => new MovieModel(), 'categories' => $category->asObject()->findAll()], 'new');
-	}
+        }
+        
+        return redirect()->back()->withInput();
+    }
 
-	public function create() {
-		$movie = new MovieModel();
+    public function edit($id = null){
 
-		if ($this->validate('movies')) {
-			$id = $movie->insert([
-				'title' => $this->request->getPost('title'),
-				'description' => $this->request->getPost('description'),
-				'category_id' => $this->request->getPost('category_id'),
-			]);
+        $category = new CategoryModel();
+        $images = new MovieImageModel();
+        $movie = new MovieModel();
 
-			return redirect()->to("/movie/$id/edit")->with('message', 'Película creada con éxito.');
-		}
-		return redirect()->back()->withInput();
-	}
+        if ($movie->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
 
-	public function edit($id = null) {
-		$category = new CategoryModel();
-		$images = new MovieImageModel();
-		$movie = new MovieModel();
+        $validation =  \Config\Services::validation();
+        $this->_loadDefaultView('Actualizar película',
+        ['validation'=>$validation,'movie'=> $movie->asObject()->find($id), 
+        'categories' => $category->asObject()->findAll(),
+        'images' => $images->getByMovieId($id)],'edit');
+    }
 
-		if ($movie->find($id) == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
-		$validation = \Config\Services::validation();
-		$this->_loadDefaultView('Actualizar película', ['validation' => $validation, 'movie' => $movie->asObject()->find($id), 'categories' => $category->asObject()->findAll(), 'images' => $images->getByMovieId($id)], 'edit');
-	}
+    public function update($id = null){
 
-	public function update($id = null) {
-		$movie = new MovieModel();
+        $movie = new MovieModel();
 
-		if ($movie->find($id) == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
+        if ($movie->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
 
-		if ($this->validate('movies')) {
-			$movie->update(
-				$id,
-				[
-					'title' => $this->request->getPost('title'),
-					'description' => $this->request->getPost('description'),
-					'category_id' => $this->request->getPost('category_id'),
-				]);
+        if($this->validate('movies')){
+            $movie->update($id, [
+                'title' =>$this->request->getPost('title'),
+                'description' =>$this->request->getPost('description'),
+                'category_id' =>$this->request->getPost('category_id'),
+            ]);
 
-			log_message('info', 'Usuario actualizado: {id}', ['id' => $id]);
+            $this->_upload($id);
 
-			// cache()->delete('movies');
+            return redirect()->to('/movie')->with('message', 'Película editada con éxito.');
 
-			$this->_upload($id);
+        }
 
-			return redirect()->to('/movie')->with('message', 'Película editada con éxito.');
-		}
-		return redirect()->back()->withInput();
-	}
+        return redirect()->back()->withInput();
+    }
 
-	public function delete($id = null) {
-		$movie = new MovieModel();
-		if ($movie->find($id) == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
-		$movie->delete($id);
-		return redirect()->to('/movie')->with('message', 'Película eliminada con éxito.');
-	}
+    public function delete($id = null){
 
-	public function show($id = null) {
+        $movie = new MovieModel();
 
-		$movieModel = new MovieModel();
-		$movie = $movieModel->asObject()->find($id);
-		$imageModel = new MovieImageModel();
+        if ($movie->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        
+        $movie->delete($id);
 
-		if ($movie == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
+        return redirect()->to('/movie')->with('message', 'Película eliminada con éxito.');
+    }
 
-		$this->_loadDefaultView($movie->title,
-			['movie' => $movie, 'images' => $imageModel->getByMovieId($id)], 'show');
-	}
+    public function show($id = null){
+        
+        $movieModel = new MovieModel();
+        $movie = $movieModel->asObject()->find($id);
+        $imageModel = new MovieImageModel();
 
-	public function deleteImage($imageId) {
-		helper('filesystem');
-		$imageModel = new MovieImageModel();
-		$image = $imageModel->asObject()->find($imageId);
+        if ($movie == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }   
 
-		if ($image == null) {
-			throw PageNotFoundException::forPageNotFound();
-		}
+        $this->_loadDefaultView($movie->title,
+        ['movie'=> $movie,
+        'images' => $imageModel->getByMovieId($id)],'show');
 
-		$imgRute = WRITEPATH . 'uploads/movies/' . $image->movie_id . '/' . $image->image;
+    }
 
-		if (!file_exists($imgRute)) {
+    public function delete_image($imageId){
+
+        helper('filesystem');
+
+        $imageModel = new MovieImageModel();
+
+        $image = $imageModel->asObject()->find($imageId);
+
+        if ($image == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+
+        $imgRute = WRITEPATH.'uploads/movies/'.$image->movie_id.'/'.$image->image;
+
+		if(!file_exists($imgRute)){
 			throw PageNotFoundException::forPageNotFound();
 		}
 
-		$imageModel->delete($imageId);
-		unlink($imgRute);
-		return redirect()->back()->with('message', 'Imagen eliminada con éxito.');
-	}
+        $imageModel->delete($imageId);
 
-	private function _upload($movieId) {
-		$images = new MovieImageModel();
+        delete_files($imgRute);
 
-		if ($imagefile = $this->request->getFile('image')) {
-			if ($imagefile->isValid() && !$imagefile->hasMoved()) {
-				$newName = $imagefile->getRandomName();
-				$imagefile->move(WRITEPATH . 'uploads/movies/' . $movieId, $newName);
+        return redirect()->back()->with('message', 'Imagen eliminada con éxito.');
+    }
 
-				$images->save([
-					'movie_id' => $movieId,
-					'image' => $newName,
-				]);
-			}
-		}
-	}
 
-	private function _loadDefaultView($title, $data, $view) {
-		$dataheader = [
-			'title' => $title,
-		];
+    private function _upload($movieId){
 
-		echo view("dashboard/templates/header", $dataheader);
-		echo view("dashboard/movie/$view", $data);
-		echo view("dashboard/templates/footer");
-	}
+        $images = new MovieImageModel();
+
+        if($imagefile = $this->request->getFile('image')){
+    
+            if ($imagefile->isValid() && ! $imagefile->hasMoved())
+            {
+                $newName = $imagefile->getRandomName();
+                $imagefile->move(WRITEPATH.'uploads/movies/'.$movieId, $newName);
+
+                $images->save([
+                    'movie_id' => $movieId,
+                    'image' =>$newName
+                ]);
+
+            }
+        }
+    }
+
+    private function _loadDefaultView($title,$data,$view){
+
+        $dataHeader =[
+            'title' => $title
+        ];
+
+        echo view("dashboard/templates/header",$dataHeader);
+        echo view("dashboard/movie/$view",$data);
+        echo view("dashboard/templates/footer");
+    }
+
+
 }

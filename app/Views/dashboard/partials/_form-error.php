@@ -1,1 +1,1 @@
-<?=$validation->listErrors()?>
+<?= $validation->listErrors() ?>

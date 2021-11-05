@@ -13,15 +13,16 @@
 
         <?php foreach ($users as $key => $u): ?>
             <tr>
-                <td><?=$u->id?></td>
-                <td><?=$u->email?></td>
-                <td><?=$u->username?></td>
-                <td class="d-flex">
-                    <form action="/client/delete/<?=$u->id?>" method="post">
-                        <button data-toggle="tooltip" data-placement="top" title="Borrar" class="float-right btn btn-danger btn-sm ms-2" type="submit"><i class="fa fa-trash"></i></button>
+                <td><?= $u->id ?></td>
+                <td><?= $u->email ?></td>
+                <td><?= $u->username ?></td>
+                <td>
+
+                    <form action="/client/delete/<?= $u->id ?>" method="POST">
+                        <button data-toggle="tooltip" data-placement="top" title="Borrar" class="float-right btn btn-danger btn-sm ml-2" type="submit"><i class="fa fa-trash"></i></button>
                     </form>
 
-                    <a data-toggle="tooltip" data-placement="top" title="Editar" class="float-right ms-2 btn btn-primary btn-sm" href="/client/<?=$u->id?>/edit"><i class="fa fa-pencil-alt"></i></a>
+                    <a data-toggle="tooltip" data-placement="top" title="Editar" class="float-right ml-2 btn btn-primary btn-sm" href="/client/<?= $u->id ?>/edit"><i class="fa fa-pencil-alt"></i></a>
 
                 </td>
             </tr>
@@ -32,4 +33,4 @@
     </tbody>
 </table>
 
-<?=$pager->links()?>
+<?= $pager->links() ?>

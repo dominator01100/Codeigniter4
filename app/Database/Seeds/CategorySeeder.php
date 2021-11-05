@@ -1,19 +1,20 @@
-<?php
+<?php namespace App\Database\Seeds;
 
-namespace App\Database\Seeds;
+class CategorySeeder extends \CodeIgniter\Database\Seeder
+{
+        public function run()
+        {
 
-use CodeIgniter\Database\Seeder;
+            $this->db->table('categories')->where('id >',1)->delete();
 
-class CategorySeeder extends Seeder {
-	public function run() {
-		$this->db->table('categories')->where('id >', 1)->delete();
 
-		for ($i = 1; $i <= 20; $i++) {
-			$data = [
-				'title' => "Categoría $i",
-			];
+                for ($i=1; $i <= 20; $i++) { 
+                    $data = [
+                        'title' => "Categoría $i"
+                    ];
+                    $this->db->table('categories')->insert($data);
+                }
 
-			$this->db->table('categories')->insert($data);
-		}
-	}
+                
+        }
 }

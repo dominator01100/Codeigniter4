@@ -3,7 +3,9 @@ use App\Controllers\BaseController;
 
 class CategoryController extends BaseController {
 
-	public function index() {
-		echo ("Hola mundo");
-	}
+    public function index(){
+        echo "Hola mundo";
+    }
+
+
 }
