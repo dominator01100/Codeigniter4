@@ -147,6 +147,9 @@ $routes->group('store', function ($routes) {
 	$routes->get('buyed/(:num)', 'Store\Buyed::show/$1', ['as' => 'store_buyed_show']);
 });
 
+// CRUD Genérico
+$routes->resource('categoryautocrud', ['controller' => 'CategoryAutoCRUD']);
+
 /**
  * --------------------------------------------------------------------
  * Additional Routing

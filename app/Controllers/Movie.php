@@ -4,10 +4,13 @@ use App\Models\CategoryModel;
 use App\Models\MovieImageModel;
 use App\Controllers\BaseController;
 use \CodeIgniter\Exceptions\PageNotFoundException;
+use \CodeIgniter\View\Table;
 
 class Movie extends BaseController {
 
     public function index(){
+
+      //$table = Table();
 
         $movie = new MovieModel();
 
@@ -47,7 +50,7 @@ class Movie extends BaseController {
             return redirect()->to("/movie/$id/edit")->with('message', 'Película creada con éxito.');
 
         }
-        
+
         return redirect()->back()->withInput();
     }
 
@@ -60,11 +63,11 @@ class Movie extends BaseController {
         if ($movie->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }  
+        }
 
         $validation =  \Config\Services::validation();
         $this->_loadDefaultView('Actualizar película',
-        ['validation'=>$validation,'movie'=> $movie->asObject()->find($id), 
+        ['validation'=>$validation,'movie'=> $movie->asObject()->find($id),
         'categories' => $category->asObject()->findAll(),
         'images' => $images->getByMovieId($id)],'edit');
     }
@@ -76,7 +79,7 @@ class Movie extends BaseController {
         if ($movie->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }  
+        }
 
         if($this->validate('movies')){
             $movie->update($id, [
@@ -101,15 +104,15 @@ class Movie extends BaseController {
         if ($movie->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }  
-        
+        }
+
         $movie->delete($id);
 
         return redirect()->to('/movie')->with('message', 'Película eliminada con éxito.');
     }
 
     public function show($id = null){
-        
+
         $movieModel = new MovieModel();
         $movie = $movieModel->asObject()->find($id);
         $imageModel = new MovieImageModel();
@@ -117,7 +120,7 @@ class Movie extends BaseController {
         if ($movie == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }   
+        }
 
         $this->_loadDefaultView($movie->title,
         ['movie'=> $movie,
@@ -136,7 +139,7 @@ class Movie extends BaseController {
         if ($image == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }  
+        }
 
         $imgRute = WRITEPATH.'uploads/movies/'.$image->movie_id.'/'.$image->image;
 
@@ -157,7 +160,7 @@ class Movie extends BaseController {
         $images = new MovieImageModel();
 
         if($imagefile = $this->request->getFile('image')){
-    
+
             if ($imagefile->isValid() && ! $imagefile->hasMoved())
             {
                 $newName = $imagefile->getRandomName();
